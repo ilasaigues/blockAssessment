@@ -22,13 +22,12 @@ public class BlockDisplay : MonoBehaviour
     private bool _simulate;
 
     private Rigidbody _rb;
+    private Renderer _renderer;
 
     private BlockType _blockTypeInfo;
     private StackTestGameMode _stackTestGameMode;
     private BlockData _blockData;
     public BlockData BlockData => _blockData;
-
-    [Inject] private StackTestTooltipDisplay _tooltip;
 
     [Inject]
     private void Initialize(BlockType blockTypeInfo, StackTestGameMode stackTestGameMode, BlockData blockData)
@@ -36,7 +35,8 @@ public class BlockDisplay : MonoBehaviour
         _blockTypeInfo = blockTypeInfo;
         _blockData = blockData;
         _stackTestGameMode = stackTestGameMode;
-        GetComponent<Renderer>().material = blockTypeInfo.BaseMaterial;
+        if (_renderer == null) _renderer = GetComponent<Renderer>();
+        _renderer.material = blockTypeInfo.BaseMaterial;
     }
 
     public void SetTransformData(Vector3 position, Quaternion rotation, Vector3 scale)
@@ -63,12 +63,6 @@ public class BlockDisplay : MonoBehaviour
         _stackTestGameMode.OnSimulationStop -= OnSimulationStop;
     }
 
-
-    void Update()
-    {
-
-    }
-
     public void OnSimulationStart(StackTestGameMode.StackDisplayData currentStackData)
     {
         if (_blockData.grade == currentStackData.ID) //This block is currently part of the simulated stack
@@ -92,14 +86,13 @@ public class BlockDisplay : MonoBehaviour
 
     public void DisplayAsSelected()
     {
-        GetComponent<Renderer>().material = _blockTypeInfo.SelectedMaterial;
+        _renderer.material = _blockTypeInfo.SelectedMaterial;
 
     }
 
     public void DisplayAsNormal()
     {
-        GetComponent<Renderer>().material = _blockTypeInfo.BaseMaterial;
-
+        _renderer.material = _blockTypeInfo.BaseMaterial;
     }
 
     private void ResetState()
